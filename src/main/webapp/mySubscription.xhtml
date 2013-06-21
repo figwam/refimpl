@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/tmpl/template.xhtml">
+	<ui:define name="contentInsert">
+    <script src="js/app.js"></script>
+	<script type="text/javascript">
+	<!--
+	// !!! NOTE !!!
+	// Do not try to insert the javascript functions from /tmpl/sript.xhtml only here, it won't work!
+	// We have to keep the same functions redundant. Once in template.xhtml and once in other *.xhtml.
+	// Otherwise the functions will not work:
+	// 1. (if only in template.xhtml) If you navigate to specified JSF and try to excute the function, it won't work
+	// 2. (if only in *.xhtml) If you navigate to specified JSF, refresh the page, and try to excute the function, it won't work
+	
+	// we have to load the functions also in pages
+	// because of jquery Ajax navigation model, see: http://jquerymobile.com/test/docs/pages/page-scripting.html 
+	// http://stackoverflow.com/questions/4507977/jquerymobile-mobile-changepage/9085014#9085014
+	-->
+	$( document ).ready( function() {
+		
+	    $('a[href*=#deleteSubscription]').click(function(event) {
+	        event.preventDefault();
+	        id = getParameterByName('subscriptionId');
+	        doOperation({"operation":"deleteSubscription","id":id});
+	    });
+	    
+	    $('a[href*=#cancelSubscription]').click(function(event) {
+	        event.preventDefault();
+	        id = getParameterByName('subscriptionId');
+	        doOperation({"operation":"cancelSubscription","id":id});
+	    });
+		                            
+	});
+	</script>
+	<c:set var="_service" value="#{userManager.loadSelectedSubscription()}"/>
+	<img src="#{userManager.img(status.index,_service.serviceId.hashCode())}" />
+	<c:if test="#{_service.validTill != null and _service.isRecurrent}">
+		<p>This subscription was canceled and is valid till: #{_service.validTill}</p>
+		<br/>
+	</c:if>
+	<c:if test="#{_service.nextPayment != null and _service.isRecurrent}">
+		<p>This subscription is recurrent, next payment is: #{_service.nextPayment}</p>
+		<br/>
+	</c:if>
+	<c:if test="#{not _service.isRecurrent}">
+		<p>This subscription is not Recurrent</p>
+		<br/>
+	</c:if>
+	<p>Id: #{_service.serviceId}</p>
+	<p>Amount: #{_service.amount}</p>
+	<c:if test="#{_service.paymentInfo != null}">
+		<p>Payment info: #{_service.paymentInfo}</p>
+	</c:if>
+	<c:if test="#{_service.trialAmount != null}">
+		<p>Trial amount: #{_service.trialAmount}</p>
+	</c:if>
+	<c:if test="#{_service.duration != null}">
+		<p>Duration: #{_service.humanReadableDuration}</p>
+	</c:if>
+	<p> 
+		<c:if test="#{_service.status eq 'ACTIVE' and _service.isRecurrent}">
+					<a
+						class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-icon-left ui-btn-up-b"
+						data-inline="true" data-theme="b"
+						data-role="button" data-corners="true"
+						data-shadow="true" data-iconshadow="true" data-wrapperels="span"
+						href="#cancelSubscription">
+						<span class="ui-btn-inner ui-btn-corner-all"> 
+							<span class="ui-btn-text">Cancel</span> 
+							<span class="ui-icon ui-icon-minus ui-icon-shadow"></span>
+						</span>
+					</a>
+				</c:if>
+				
+				<c:if test="#{_service.validTill != null or _service.nextPayment != null}">
+					<a
+						class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-icon-left ui-btn-up-b"
+						data-corners="true" data-shadow="true"
+						data-iconshadow="true" data-wrapperels="span" data-theme="b"
+						href="#deleteSubscription">
+						<span class="ui-btn-inner ui-btn-corner-all"> 
+							<span class="ui-btn-text">Delete</span> 
+							<span class="ui-icon ui-icon-delete ui-icon-shadow"></span>
+						</span>
+					</a>
+				</c:if>
+	</p>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/tmpl/template.xhtml">
+	<ui:define name="contentInsert">
+		<h:form>
+			<c:set var="_service" value="#{userManager.loadSelectedService()}"/>
+			<img src="#{userManager.img(status.index,_service.serviceId.hashCode())}" />
+			<p>Id: #{_service.serviceId}</p>
+			<p>Name: #{_service.serviceName}</p>
+			<p>Amount: CHF #{_service.amount}</p>
+			<c:if test="#{_service.hasTrial}">
+				<p>Trial amount: CHF #{_service.trialAmount}</p>
+			</c:if>
+			<c:if test="#{_service.isRecurrent}">
+				<p>Duration: #{_service.humanReadableDuration}</p>
+			</c:if>
+			<p>
+				<a
+					class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-icon-left ui-btn-up-b"
+					data-inline="true" data-theme="b" data-icon="check"
+					data-role="button" data-corners="true"
+					data-shadow="true" data-iconshadow="true" data-wrapperels="span"
+					href="#{userManager.doCheckoutOnePhase()}">
+					<span class="ui-btn-inner ui-btn-corner-all"> 
+						<span class="ui-btn-text">Purchase</span> 
+						<span class="ui-icon ui-icon-check ui-icon-shadow"></span>
+					</span>
+				</a>
+			</p>
+			<!-- 
+			<p>
+				<a
+					class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-icon-left ui-btn-up-b"
+					data-inline="true" data-theme="b" data-icon="check"
+					data-role="button" data-corners="true"
+					data-shadow="true" data-iconshadow="true" data-wrapperels="span"
+					href="#{userManager.doCheckoutTwoPhase()}">
+					<span class="ui-btn-inner ui-btn-corner-all"> 
+						<span class="ui-btn-text">Purchase (Two Phase)</span> 
+						<span class="ui-icon ui-icon-check ui-icon-shadow"></span>
+					</span>
+				</a>
+				
+			</p>
+			 -->
+		</h:form>
+	</ui:define>
+</ui:composition>

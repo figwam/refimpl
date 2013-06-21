@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/tmpl/template.xhtml">
+	<ui:define name="contentInsert">
+		<div class="content-primary">
+			<ul data-role="listview">
+				<ui:repeat value="#{userManager.currentUser.services}" var="service"
+					varStatus="status">
+					<li><h:link outcome="service">
+							<img src="#{userManager.img(status.index,service.serviceId.hashCode())}" />
+							<h3>#{service.serviceId}</h3>
+							<p>#{service.serviceName}</p>
+							<f:param name="serviceId" value="#{service.serviceId}" />
+						</h:link></li>
+				</ui:repeat>
+			</ul>
+		</div>
+	</ui:define>
+</ui:composition>

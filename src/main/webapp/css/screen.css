@@ -1,0 +1,42 @@
+/*
+ * Copyright 2010-2012 swisscom.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ *
+ * This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8em;
+    color: #363636;
+}
+
+code {
+    font-size: 1.1em;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #369;
+    text-decoration: underline;
+}
+
+/* Member registration styles */
+span.invalid {
+    padding-left: 3px;
+    color: red;
+}
+
+span.success {
+   padding-left: 3px;
+   color: green;
+}

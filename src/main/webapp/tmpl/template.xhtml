@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+		<h:head>
+			<title>refimpl</title>
+			
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+			<link rel="Shortcut Icon" href="#{request.contextPath}/img/ri_icon_16x.png"/>
+			<link rel="apple-touch-icon" href="#{request.contextPath}/img/ri_avatar_48px.png"/>
+			
+			<!-- For minification, comment out this link -->
+			<!-- Shared styles -->
+			<!-- 
+			<link rel="stylesheet" href="css/screen.css"/>
+			-->
+			<link rel="stylesheet" href="#{request.contextPath}/themes/refimpl.min.css" />
+			 
+			<!-- Set viewport scaling and zoom features -->
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			
+			<!-- 
+			http://www.mkyong.com/jsf2/how-to-include-javascript-file-in-jsf/ 
+			old: <script type="text/javascript" src="js/app.js"></script>
+			-->
+
+			<script type="text/javascript" src="${request.contextPath}/js/libs/modernizr-2.5.3.min.js"></script>
+			<script type="text/javascript" src="${request.contextPath}/js/libs/yepnope.1.5.4-min.js"></script>
+			<script type="text/javascript" src="${request.contextPath}/js/libs/underscore-min.js"></script>
+
+			<!-- Minification - See Readme for details -->
+			<!-- For minification, comment out this file -->
+			<script type="text/javascript" src="${request.contextPath}/js/app.js"></script>
+			
+			<!-- For minification, uncomment this file -->
+			<!-- <script type="text/javascript" src="js/app.min.js"></script> -->
+			<script type="text/javascript">
+		        yepnope([{
+		            //Load CDN hosted jQuery or fall back to local file.
+		            /*--------Note-----------
+		            This approach should only be used if you trust the source of where the resource (JavaScript) is located.
+		            In this case, use of the jquery CDN is much faster if your user's browser already has this file cached.
+		            If they don't have it cached, try to load it from the CDN as this will be faster if the user is
+		            located closer to a CDN than you currently hosted server.
+		            */
+		            load: "http://code.jquery.com/jquery-1.7.1.min.js",
+		            complete: function() {
+		                if ( !window.jQuery ) {
+		                    //In production, you would want to fall back to a minified file.
+		                    //We fall back to the full version because Eclipse reports false errors in some minified JavaScript files.
+		                    yepnope("#{request.contextPath}/js/libs/jquery-1.7.1.js");
+		                }
+		            }
+		        },{
+		            //device detection and asynchronous script loading
+		            /*--------Note-----------
+		            Here we're using the yepnope framework which gives us the ability to load scripts dynamically, based on
+		            Modernizr's results.
+		            With Modernizr, we use media queries and touch detection to see if we are on a mobile, touch based device
+		            or if we're at anything less than 480px.. this gives us a mobile ui on desktop browsers when resized to min of 480px
+		            width for testing.
+		            */
+		            test: Modernizr.touch || Modernizr.mq( "only all and (max-width: 480px)" ),
+		            yep: {
+		                //assign labeled callbacks for later execution after script loads.
+		                //we are on mobile device so load appropriate CSS
+		                "jqmcss": "#{request.contextPath}/css/jquery.mobile-1.1.0.min.css",
+		                // For minification, uncomment this line
+		                //"mcss": "css/m.screen.min.css"
+		                // For minification, comment out this line
+		                "mcss": "#{request.contextPath}/css/m.screen.css"
+		            },
+		            nope: {
+						//load also mobile css for desctop
+						"jqmcss": "#{request.contextPath}/css/jquery.mobile-1.1.0.min.css",
+		                //we are on desktop
+		                // For minification, uncomment this line
+		                //"scss": "css/d.screen.min.css"
+		                // For minification, comment out this line
+		            	"scss": "#{request.contextPath}/css/m.screen.css"
+		            },
+		            callback: {
+		                //use the labeled callbacks from above, and load jQuery Mobile
+		                "jqmcss": function( url, result, key ) {
+		                    yepnope({
+		                        load: "http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js",
+		                        complete: function() {
+		                            if ( !$.mobile ) {
+		                                yepnope( "#{request.contextPath}/js/libs/jquery.mobile-1.1.0.min.js" );
+		                            }
+		                        }
+		                    });
+		                },
+		                "scss": function( url, result, key ) {
+		                    $( document ).ready( function() {
+		                        //here we are moving content around based on the browser/device.
+		                        $( "aside" ).insertAfter( $( "section" ) );
+		                    });
+		                }
+		            },
+		            complete: function() {
+		                $( document ).ready( function() {
+		                	
+		                	// !!! NOTE !!!
+							// Do not try to insert the javascript functions from /tmpl/script.xhtml only here, it won't work!
+							// We have to keep the same functions redundant. Once in template.xhtml and once in other *.xhtml.
+							// Otherwise the functions will not work:
+							// 1. (if only in template.xhtml) If you navigate to specified JSF and try to excute the function, it won't work
+							// 2. (if only in *.xhtml) If you navigate to specified JSF, refresh the page, and try to excute the function, it won't work
+							
+		                	// we have to load the functions also in pages
+		                	// because of jquery Ajax navigation model, see: http://jquerymobile.com/test/docs/pages/page-scripting.html 
+			                //    use: ui:include src="/faces/tmpl/script.js"
+		                	// http://stackoverflow.com/questions/4507977/jquerymobile-mobile-changepage/9085014#9085014
+		                	
+		                	
+			                
+		                    //setup the app after all scripts have loaded
+		                    $( "#page1" ).show();
+		            	    
+		            	    $('a[href*=#test]').click(function(event) {
+		            	        /(.*)mib/.exec("http://localhost:28080/refimpl/mib2/home.jsf");
+		            	    	var url = RegExp.$1;
+		            	        console.info(url);
+		            	    });
+
+		            	    $('a[href*=#deleteSubscription]').click(function(event) {
+		            	        event.preventDefault();
+		            	        id = getParameterByName('subscriptionId');
+		            	        doOperation({"operation":"deleteSubscription","id":id});
+		            	    });
+		            	    
+		            	    $('a[href*=#cancelSubscription]').click(function(event) {
+		            	        event.preventDefault();
+		            	        id = getParameterByName('subscriptionId');
+		            	        doOperation({"operation":"cancelSubscription","id":id});
+		            	    });
+		            	                    
+		            	    $('a[href=#reenter]').click(function(event){
+		            	        event.preventDefault();
+		            			logout();
+		            	    });
+		            	                
+		            	    $('a[href=#home]').click(function(event){
+		            	        event.preventDefault();
+		            			home();
+		            	    });	
+		            	
+		            		$('#login').submit(function(event){
+		            		event.preventDefault();
+		            			var loginData = $(this).serializeObject();
+		            			//Workaround for jQM adding a hidden field for submit buttons which then
+		            			//gets serialized into the form values
+		            			if ( loginData.login ) {
+		            				delete loginData.login;
+		            			}
+		            			login(loginData);
+		            		}); 
+		            	    
+		                });
+	                    
+	                    $(document).bind("mobileinit", function(){
+	                        $.extend(  $.mobile , {
+	                          	touchOverflowEnabled: true,
+	                  			defaultDialogTransition: 'slide' 
+	                        });
+	                    }); 
+	                	
+	                	$.fn.serializeObject = function() {
+	                		var o = {};
+	                		var a = this.serializeArray();
+	                		$.each(a, function() {
+	                			if (o[this.name]) {
+	                				if (!o[this.name].push) {
+	                					o[this.name] = [o[this.name]];
+	                				}
+	                				o[this.name].push(this.value || '');
+	                			} else {
+	                				o[this.name] = this.value || '';
+	                			}
+	                		});
+	                		return o;
+	                	};
+		            }
+		        }]);
+		    </script>
+		</h:head>
+		<c:if test="#{not checkConfig.wellConfigured}">
+			<p style="color:red"> Warning: Your Application is not properly configured.</p>
+			<p> One of following system properties are missing: 'sec.key','merchant.id','refimpl.back.url','ce.base.url','mib2.co.url'</p>
+		</c:if>
+		<c:if test="#{checkConfig.wellConfigured and login.loggedIn}">
+			<h:body id="body">
+				<div data-role="page" id="page1" data-add-back-btn="false">
+					<!-- Header -->
+					<h:form>
+						<div class="ui-header ui-bar-a" data-theme="a" data-role="header" role="banner">
+						<!-- <a href='#' class='ui-btn-left ui-btn-back' data-icon='arrow-l'>Back</a> -->
+						<c:set value="#{request.contextPath}/home.jsf" var="_homePath"></c:set>
+						<c:set value="#{request.contextPath}#{request.servletPath}" var="_currentPath"></c:set>
+						<h1 class="ui-title" role="heading" aria-level="1">RefImpl</h1>
+						<c:if test="#{_currentPath ne _homePath}">
+							<a href="#{_homePath}" data-role="button" data-icon="home" class="ui-btn-left">Home</a>
+						</c:if>
+						<h:commandLink styleClass="ui-btn-right" data-role="button" data-icon="delete" action="#{login.logout()}" value="logout"/>
+						</div>
+					</h:form>
+					<!-- /Header -->
+					
+					
+					<div data-role="content">
+						<ui:insert name="contentInsert" />
+					</div>
+		
+					<!-- Footer -->
+					<div class="ui-footer ui-bar-a" data-theme="a"  data-role="footer" data-position="fixed">
+							<div class="footer_left">
+								<a href="http://mobile.bluewin.ch/r/mobile_footer_copyright_de"
+									target="_blank" data-role="button" data-icon="home">&#169;Swisscom</a>
+							</div>
+							<div class="footer_right">
+								<a href="http://mobile.bluewin.ch/r/mobile_footer_imprint_de"
+									target="_blank" data-role="button" data-icon="info">Impressum</a>
+							</div>
+						</div>
+					</div>
+			</h:body>
+		</c:if>
+		<c:if test="#{checkConfig.wellConfigured and not login.loggedIn}">
+			<h:body id="body">
+				<div data-role="page" id="page1" data-add-back-btn="false">
+					<!-- Header -->
+					<div class="ui-header ui-bar-a" data-theme="a" data-role="header" role="banner">
+						<h1 class="ui-title" role="heading" aria-level="1">RefImpl</h1>
+					</div>
+					
+					<!-- /Header -->
+					<div data-role="content">
+						<!-- <ui:include src="/login.xhtml" />-->
+						<h:form>
+							<div class="ui-field-contain ui-body ui-br" data-role="fieldcontain">
+								<label class="ui-input-text" for="mini">Phone#:</label>
+								<h:inputText id="mini"
+									class="ui-input-text ui-body-c ui-corner-all ui-shadow-inset ui-mini"
+									type="text" name="name" placeholder="Your Phone#" 
+									value="#{login.msisdn}"
+									validatorMessage="Login failed: Invalid Phone Format">
+									<f:validateRegex pattern="(((41|\+41|0041|0)(\d){9})|((423|\+423|00423)(\d){7}))"/>
+								</h:inputText>
+							</div>
+							<h:messages style="color: red;"/>
+							<h:commandButton
+								class="ui-btn ui-shadow ui-btn-corner-all ui-btn-icon-right ui-btn-up-c"
+								data-icon="arrow-r" data-role="button"
+								data-corners="true" data-shadow="true" data-iconshadow="true"
+								data-wrapperels="span" data-iconpos="right" value="Enter"
+								action="#{login.login}">
+							</h:commandButton>
+						</h:form>
+					</div>
+					<!-- Footer -->
+					<div class="ui-footer ui-bar-a" data-theme="a"  data-role="footer" data-position="fixed">
+							<div class="footer_left">
+								<a href="http://mobile.bluewin.ch/r/mobile_footer_copyright_de"
+									target="_blank" data-role="button" data-icon="home">&#169;Swisscom</a>
+							</div>
+							<div class="footer_right">
+								<a href="http://mobile.bluewin.ch/r/mobile_footer_imprint_de"
+									target="_blank" data-role="button" data-icon="info">Impressum</a>
+							</div>
+						</div>
+					</div>
+			</h:body>
+		</c:if>
+	</html>
